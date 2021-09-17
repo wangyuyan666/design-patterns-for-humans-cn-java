@@ -1663,61 +1663,61 @@ public class IteratorMain {
 首先，我们有中介，即聊天室
 
 
-```php
-interface ChatRoomMediator 
-{
-    public function showMessage(User $user, string $message);
+```java
+public interface ChatRoomMediator {
+  void showMessage(User user, String message);
 }
 
 // Mediator
-class ChatRoom implements ChatRoomMediator
-{
-    public function showMessage(User $user, string $message)
-    {
-        $time = date('M d, y H:i');
-        $sender = $user->getName();
-
-        echo $time . '[' . $sender . ']:' . $message;
-    }
+public class ChatRoom implements ChatRoomMediator {
+  @Override
+  public void showMessage(User user, String message) {
+    System.out.println("xxxx-xx-xx" + " [" + user.getName() + "] " + message);
+  }
 }
 ```
 
 然后我们有我们的用户，即同事
 
-```php
-class User {
-    protected $name;
-    protected $chatMediator;
+```java
+public class User {
+    final String name;
+    final ChatRoomMediator mediator;
 
-    public function __construct(string $name, ChatRoomMediator $chatMediator) {
-        $this->name = $name;
-        $this->chatMediator = $chatMediator;
+    public User(String name, ChatRoomMediator mediator) {
+        this.name = name;
+        this.mediator = mediator;
     }
 
-    public function getName() {
-        return $this->name;
+    public String getName() {
+        return name;
     }
 
-    public function send($message) {
-        $this->chatMediator->showMessage($this, $message);
+    public void send(String message) {
+        this.mediator.showMessage(this, message);
     }
 }
 ```
 
 和用法
 
-```php
-$mediator = new ChatRoom();
+```java
+public class MediatorMain {
+    public static void main(String[] args) {
+        ChatRoomMediator mediator = new ChatRoom();
 
-$john = new User('John Doe', $mediator);
-$jane = new User('Jane Doe', $mediator);
+        User johnDoe = new User("John Doe", mediator);
+        User janeDoe = new User("Jane Doe", mediator);
 
-$john->send('Hi there!');
-$jane->send('Hey!');
+        johnDoe.send("Hi there!");
+        janeDoe.send("Hey!");
 
-// Output will be
-// Feb 14, 10:58 [John]: Hi there!
-// Feb 14, 10:58 [Jane]: Hey!
+        // Output will be
+        // xxxx-xx-xx [John Doe] Hi there!
+        // xxxx-xx-xx [Jane Doe] Hey!
+    }
+}
+
 ```
 
 ## 💾备忘录模式（Memento）
