@@ -1346,91 +1346,86 @@ public class ProxyMain {
 
 翻译上面的帐户示例。首先，我们有一个包含将帐户链接在一起的逻辑的基本帐户和一些帐户
 
-```php
-abstract class Account
-{
-    protected $successor;
-    protected $balance;
+```java
+public class Account {
 
-    public function setNext(Account $account)
-    {
-        $this->successor = $account;
+    protected Account successor;
+    protected final float balance;
+
+    public Account(float balance) {
+        this.balance = balance;
     }
 
-    public function pay(float $amountToPay)
-    {
-        if ($this->canPay($amountToPay)) {
-            echo sprintf('Paid %s using %s' . PHP_EOL, $amountToPay, get_called_class());
-        } elseif ($this->successor) {
-            echo sprintf('Cannot pay using %s. Proceeding ..' . PHP_EOL, get_called_class());
-            $this->successor->pay($amountToPay);
+    public void setNext(Account account) {
+        this.successor = account;
+    }
+
+    public void pay(float amountToPay) {
+        if (canPay(amountToPay)) {
+            System.out.printf("Paid %s using %s%n", amountToPay, getClass().getSimpleName());
+        } else if (successor != null) {
+            System.out.printf("Cannot pay using %s. Proceeding ..%n", getClass().getSimpleName());
+            successor.pay(amountToPay);
         } else {
-            throw new Exception('None of the accounts have enough balance');
+            throw new IllegalStateException("None of the accounts have enough balance");
         }
     }
 
-    public function canPay($amount): bool
-    {
-        return $this->balance >= $amount;
+    private boolean canPay(float amount) {
+        return balance >= amount;
     }
 }
 
-class Bank extends Account
-{
-    protected $balance;
+public class Bank extends Account {
 
-    public function __construct(float $balance)
-    {
-        $this->balance = $balance;
-    }
+  public Bank(float balance) {
+    super(balance);
+  }
 }
 
-class Paypal extends Account
-{
-    protected $balance;
+public class PayPal extends Account {
 
-    public function __construct(float $balance)
-    {
-        $this->balance = $balance;
-    }
+  public PayPal(float balance) {
+    super(balance);
+  }
 }
 
-class Bitcoin extends Account
-{
-    protected $balance;
+public class Bitcoin extends Account {
 
-    public function __construct(float $balance)
-    {
-        $this->balance = $balance;
-    }
+  public Bitcoin(float balance) {
+    super(balance);
+  }
 }
 ```
 
 现在让我们使用上面定义的链接准备责任链（即 Bank，Paypal，Bitcoin）
 
-```php
-// Let's prepare a chain like below
-//      $bank->$paypal->$bitcoin
-//
-// First priority bank
-//      If bank can't pay then paypal
-//      If paypal can't pay then bit coin
+```java
+public class ChainOfResponsibility {
+    public static void main(String[] args) {
+        // Let's prepare a chain like below
+        // $bank->$paypal->$bitcoin
+        //
+        // First priority bank
+        // f bank can't pay then paypal
+        // If paypal can't pay then bit coin
 
-$bank = new Bank(100);          // Bank with balance 100
-$paypal = new Paypal(200);      // Paypal with balance 200
-$bitcoin = new Bitcoin(300);    // Bitcoin with balance 300
+        Bank bank = new Bank(100); // Bank with balance 100
+        PayPal payPal = new PayPal(200); // Paypal with balance 200
+        Bitcoin bitcoin = new Bitcoin(300); // Bitcoin with balance 300
 
-$bank->setNext($paypal);
-$paypal->setNext($bitcoin);
+        bank.setNext(payPal);
+        payPal.setNext(bitcoin);
 
-// Let's try to pay using the first priority i.e. bank
-$bank->pay(259);
-
-// Output will be
-// ==============
-// Cannot pay using bank. Proceeding ..
-// Cannot pay using paypal. Proceeding ..:
-// Paid 259 using Bitcoin!
+        // Let's try to pay using the first priority i.e. bank
+        bank.pay(259);
+        // Output will be
+        // ==============
+        // Cannot pay using bank. Proceeding ..
+        // Cannot pay using paypal. Proceeding ..:
+        // Paid 259 using Bitcoin!
+    }
+}
 ```
 
 ## 👮命令行模式（Command）
