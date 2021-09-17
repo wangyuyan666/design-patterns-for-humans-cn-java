@@ -1075,81 +1075,73 @@ public class DecoratorMain {
 
 以上面我们的计算机为例。这里我们有电脑类
 
-```php
-class Computer
-{
-    public function getElectricShock()
-    {
-        echo "Ouch!";
+```java
+public class Computer {
+    public String getElectricShock() {
+        return "Ouch!";
     }
 
-    public function makeSound()
-    {
-        echo "Beep beep!";
+    public String makeSound() {
+        return "Beep beep!";
     }
 
-    public function showLoadingScreen()
-    {
-        echo "Loading..";
+    public String showLoadingScreen() {
+        return "Loading..";
     }
 
-    public function bam()
-    {
-        echo "Ready to be used!";
+    public String bam() {
+        return "Ready to be used!";
     }
 
-    public function closeEverything()
-    {
-        echo "Bup bup bup buzzzz!";
+    public String closeEverything() {
+        return "Bup bup bup buzzzz!";
     }
 
-    public function sooth()
-    {
-        echo "Zzzzz";
+    public String sooth() {
+        return "Zzzzz";
     }
 
-    public function pullCurrent()
-    {
-        echo "Haaah!";
+    public String pullCurrent() {
+        return "Haaah!";
     }
 }
 ```
 
 在这里，我们有门面
 
-```php
-class ComputerFacade
-{
-    protected $computer;
+```java
+public class ComputerFacade {
+    final Computer computer;
 
-    public function __construct(Computer $computer)
-    {
-        $this->computer = $computer;
+    public ComputerFacade(Computer computer) {
+        this.computer = computer;
     }
 
-    public function turnOn()
-    {
-        $this->computer->getElectricShock();
-        $this->computer->makeSound();
-        $this->computer->showLoadingScreen();
-        $this->computer->bam();
+    public void turnOn() {
+        computer.getElectricShock();
+        computer.makeSound();
+        computer.showLoadingScreen();
+        computer.bam();
     }
 
-    public function turnOff()
-    {
-        $this->computer->closeEverything();
-        $this->computer->pullCurrent();
-        $this->computer->sooth();
+    public void turnOff() {
+        computer.closeEverything();
+        computer.pullCurrent();
+        computer.sooth();
     }
 }
 ```
 
-现在使用立面
+现在使用门面
 
-```php
-$computer = new ComputerFacade(new Computer());
-$computer->turnOn(); // Ouch! Beep beep! Loading.. Ready to be used!
-$computer->turnOff(); // Bup bup buzzz! Haah! Zzzzz
+```java
+public class FacadeMain {
+    public static void main(String[] args) {
+        ComputerFacade facade = new ComputerFacade(new Computer());
+        facade.turnOn();// Ouch! Beep beep! Loading.. Ready to be used!
+        facade.turnOff();// Bup bup buzzz! Haah! Zzzzz
+    }
+}
 ```
 
 ## 🍃享元模式（Flyweight）
