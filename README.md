@@ -1162,51 +1162,46 @@ public class FacadeMain {
 
 从上面翻译我们的茶例子。首先，我们有茶类和茶具
 
-```php
+```java
 // Anything that will be cached is flyweight.
 // Types of tea here will be flyweights.
-class KarakTea
-{
+public class KarakTea {
 }
 
 // Acts as a factory and saves the tea
-class TeaMaker
-{
-    protected $availableTea = [];
+public class TeaMaker {
+    private Map<String, KarakTea> availableTea = new HashMap<>();
 
-    public function make($preference)
-    {
-        if (empty($this->availableTea[$preference])) {
-            $this->availableTea[$preference] = new KarakTea();
+    public KarakTea make(String teaType) {
+        KarakTea tea = availableTea.get(teaType);
+        if (tea == null) {
+            tea = new KarakTea();
+            availableTea.put(teaType, tea);
         }
-
-        return $this->availableTea[$preference];
+        return tea;
     }
+
 }
 ```
 
 然后我们有`TeaShop`接受订单并为他们服务
 
-```php
-class TeaShop
-{
-    protected $orders;
-    protected $teaMaker;
+```java
+public class TeaShop {
+    final TeaMaker teaMaker;
+    final Map<Integer, KarakTea> orders = new HashMap<>();
 
-    public function __construct(TeaMaker $teaMaker)
-    {
-        $this->teaMaker = $teaMaker;
+    public TeaShop(TeaMaker teaMaker) {
+        this.teaMaker = teaMaker;
     }
 
-    public function takeOrder(string $teaType, int $table)
-    {
-        $this->orders[$table] = $this->teaMaker->make($teaType);
+    public void takeOrder(String teaType, int table) {
+        orders.put(table, teaMaker.make(teaType));
     }
 
-    public function serve()
-    {
-        foreach ($this->orders as $table => $tea) {
-            echo "Serving tea to table# " . $table;
+    public void serve() {
+        for (Integer table : orders.keySet()) {
+            System.out.println("Serving tea to table# " + table);
         }
     }
 }
@@ -1214,18 +1209,22 @@ class TeaShop
 
 它可以像下面这样被使用
 
-```php
-$teaMaker = new TeaMaker();
-$shop = new TeaShop($teaMaker);
+```java
+public class FlyweightMain {
+    public static void main(String[] args) {
+        TeaMaker teaMaker = new TeaMaker();
+        TeaShop teaShop = new TeaShop(teaMaker);
 
-$shop->takeOrder('less sugar', 1);
-$shop->takeOrder('more milk', 2);
-$shop->takeOrder('without sugar', 5);
+        teaShop.takeOrder("less sugar", 1);
+        teaShop.takeOrder("more milk", 2);
+        teaShop.takeOrder("without sugar", 5);
 
-$shop->serve();
-// Serving tea to table# 1
-// Serving tea to table# 2
-// Serving tea to table# 5
+        teaShop.serve();
+//        Serving tea to table# 1
+//        Serving tea to table# 2
+//        Serving tea to table# 5
+    }
+}
 ```
 
 ## 🎱代理模式（Proxy）
