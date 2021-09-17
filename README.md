@@ -1244,68 +1244,65 @@ public class FlyweightMain {
 
 以上面我们的安全门为例。首先我们有门接口和门的实现
 
-```php
-interface Door
-{
-    public function open();
-    public function close();
+```java
+public interface Door {
+    void open();
+    void close();
 }
 
-class LabDoor implements Door
-{
-    public function open()
-    {
-        echo "Opening lab door";
+public class LabDoor implements Door{
+    @Override
+    public void open() {
+        System.out.println("Opening lab door");
     }
 
-    public function close()
-    {
-        echo "Closing the lab door";
+    @Override
+    public void close() {
+        System.out.println("Closing the lab door");
     }
 }
 ```
 
 然后我们有一个代理来保护任何我们想要保护的门
 
-```php
-class SecuredDoor
-{
-    protected $door;
+```java
+public class SecuredDoor {
+    final Door door;
 
-    public function __construct(Door $door)
-    {
-        $this->door = $door;
+    public SecuredDoor(Door door) {
+        this.door = door;
     }
 
-    public function open($password)
-    {
-        if ($this->authenticate($password)) {
-            $this->door->open();
+    public void open(String password) {
+        if (authenticate(password)) {
+            door.open();
         } else {
-            echo "Big no! It ain't possible.";
+            System.out.println("Big no! It ain't possible.");
         }
     }
 
-    public function authenticate($password)
-    {
-        return $password === '$ecr@t';
+    private boolean authenticate(String password) {
+        return "$ecr@t".equals(password);
     }
 
-    public function close()
-    {
-        $this->door->close();
+    public void close() {
+        door.close();
     }
 }
 ```
 
 它可以这样被使用
 
-```php
-$door = new SecuredDoor(new LabDoor());
-$door->open('invalid'); // Big no! It ain't possible.
+```java
+public class ProxyMain {
+    public static void main(String[] args) {
+        SecuredDoor securedDoor = new SecuredDoor(new LabDoor());
+        securedDoor.open("invalid"); // Big no! It ain't possible.
 
-$door->open('$ecr@t'); // Opening lab door
-$door->close(); // Closing lab door
+        securedDoor.open("$ecr@t"); // Opening lab door
+        securedDoor.close(); // Closing lab door
+    }
+}
 ```
 
 另一个例子是某种数据映射器实现。例如，我最近使用这种模式为 MongoDB 制作了一个 ODM（对象数据映射器），我在使用魔术方法`__call()`围绕 mongo 类编写了一个代理。所有方法调用被代理到原始mongo类，检索结果被原样返回。但在`find`或`findOne`的情况下，数据被映射到所需的类对象，返回这个对象来代替`Cursor`。
