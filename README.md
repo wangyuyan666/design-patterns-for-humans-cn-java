@@ -1561,97 +1561,85 @@ public class CommandMain {
 
 在 PHP 中，使用 SPL（标准 PHP 库）很容易实现。从上面翻译我们的广播电台示例。首先，我们有`RadioStation`
 
-```php
-class RadioStation
-{
-    protected $frequency;
+```java
+public class RadioStation {
+    private final float frequency;
 
-    public function __construct(float $frequency)
-    {
-        $this->frequency = $frequency;
+    public RadioStation(float frequency) {
+        this.frequency = frequency;
     }
 
-    public function getFrequency(): float
-    {
-        return $this->frequency;
+    public float getFrequency() {
+        return frequency;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RadioStation that = (RadioStation) o;
+        return Float.compare(that.frequency, frequency) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(frequency);
     }
 }
 ```
 
 然后我们有了迭代器
 
-```php
-use Countable;
-use Iterator;
+```java
+public class StationList implements Iterator<RadioStation> {
 
-class StationList implements Countable, Iterator
-{
-    /** @var RadioStation[] $stations */
-    protected $stations = [];
+    private List<RadioStation> stations = new ArrayList<>();
 
-    /** @var int $counter */
-    protected $counter;
+    private int count;
 
-    public function addStation(RadioStation $station)
-    {
-        $this->stations[] = $station;
+    public void addStation(RadioStation station) {
+        stations.add(station);
     }
 
-    public function removeStation(RadioStation $toRemove)
-    {
-        $toRemoveFrequency = $toRemove->getFrequency();
-        $this->stations = array_filter($this->stations, function (RadioStation $station) use ($toRemoveFrequency) {
-            return $station->getFrequency() !== $toRemoveFrequency;
-        });
+    public void removeStation(RadioStation station) {
+        stations.remove(station);
     }
 
-    public function count(): int
-    {
-        return count($this->stations);
+    @Override
+    public boolean hasNext() {
+        return stations.size() > count;
     }
 
-    public function current(): RadioStation
-    {
-        return $this->stations[$this->counter];
-    }
-
-    public function key()
-    {
-        return $this->counter;
-    }
-
-    public function next()
-    {
-        $this->counter++;
-    }
-
-    public function rewind()
-    {
-        $this->counter = 0;
-    }
-
-    public function valid(): bool
-    {
-        return isset($this->stations[$this->counter]);
+    @Override
+    public RadioStation next() {
+        if (hasNext()) {
+            return stations.get(count++);
+        }
+        return null;
     }
 }
 ```
 
 然后它可以用作
 
-```php
-$stationList = new StationList();
+```java
+public class IteratorMain {
+    public static void main(String[] args) {
+        StationList stationList = new StationList();
 
-$stationList->addStation(new RadioStation(89));
-$stationList->addStation(new RadioStation(101));
-$stationList->addStation(new RadioStation(102));
-$stationList->addStation(new RadioStation(103.2));
+        stationList.addStation(new RadioStation(89));
+        stationList.addStation(new RadioStation(101));
+        stationList.addStation(new RadioStation(102));
+        stationList.addStation(new RadioStation(103.2f));
 
-foreach($stationList as $station) {
-    echo $station->getFrequency() . PHP_EOL;
+        while (stationList.hasNext()) {
+            RadioStation next = stationList.next();
+            System.out.printf("frequency is %s%n", next.getFrequency());
+        }
+
+        stationList.removeStation(new RadioStation(89)); // Will remove station 89
+    }
 }
-
-$stationList->removeStation(new RadioStation(89)); // Will remove station 89
 ```
 
 ## 👽中介者模式（Mediator）
