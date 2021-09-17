@@ -732,86 +732,82 @@ public class AdapterMain {
 
 从上面翻译我们的 WebPage 示例。这里我们有`WebPage`层次结构
 
-```php
-interface WebPage
-{
-    public function __construct(Theme $theme);
-    public function getContent();
+```java
+public interface WebPage {
+    String getContent();
 }
 
-class About implements WebPage
-{
-    protected $theme;
+public class AboutPage implements WebPage {
+    private final Theme theme;
 
-    public function __construct(Theme $theme)
-    {
-        $this->theme = $theme;
+    public AboutPage(Theme theme) {
+        this.theme = theme;
     }
 
-    public function getContent()
-    {
-        return "About page in " . $this->theme->getColor();
+    @Override
+    public String getContent() {
+        return "Careers page in " + theme.getColor();
     }
 }
 
-class Careers implements WebPage
-{
-    protected $theme;
+public class CareersPage implements WebPage {
+    private final Theme theme;
 
-    public function __construct(Theme $theme)
-    {
-        $this->theme = $theme;
+    public CareersPage(Theme theme) {
+        this.theme = theme;
     }
 
-    public function getContent()
-    {
-        return "Careers page in " . $this->theme->getColor();
+    @Override
+    public String getContent() {
+        return "About page in " + theme.getColor();
     }
 }
 ```
 
 和单独的主题层次结构
 
-```php
+```java
 
-interface Theme
-{
-    public function getColor();
+public interface Theme {
+    String getColor();
 }
 
-class DarkTheme implements Theme
-{
-    public function getColor()
-    {
-        return 'Dark Black';
+public class DarkTheme implements Theme {
+    @Override
+    public String getColor() {
+        return "Dark Black";
     }
 }
-class LightTheme implements Theme
-{
-    public function getColor()
-    {
-        return 'Off white';
+
+public class LightTheme implements Theme {
+    @Override
+    public String getColor() {
+        return "Off white";
     }
 }
-class AquaTheme implements Theme
-{
-    public function getColor()
-    {
-        return 'Light blue';
+
+public class AquaTheme implements Theme {
+    @Override
+    public String getColor() {
+        return "Light blue";
     }
 }
 ```
 
 以及这两个层次结构
 
-```php
-$darkTheme = new DarkTheme();
+```java
+public class BridgeMain {
+    public static void main(String[] args) {
+        DarkTheme darkTheme = new DarkTheme();
 
-$about = new About($darkTheme);
-$careers = new Careers($darkTheme);
+        AboutPage aboutPage = new AboutPage(darkTheme);
+        CareersPage careersPage = new CareersPage(darkTheme);
 
-echo $about->getContent(); // "About page in Dark Black";
-echo $careers->getContent(); // "Careers page in Dark Black";
+        System.out.println(aboutPage.getContent());// "About page in Dark Black";
+        System.out.println(careersPage.getContent());// "Careers page in Dark Black";
+    }
+}
 ```
 
 ## 🌿组合模式（Composite）
