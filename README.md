@@ -828,121 +828,114 @@ public class BridgeMain {
 
 以上面的员工为例。这里我们有不同的员工类型
 
-```php
-interface Employee
-{
-    public function __construct(string $name, float $salary);
-    public function getName(): string;
-    public function setSalary(float $salary);
-    public function getSalary(): float;
-    public function getRoles(): array;
+```java
+public interface Employee {
+  String getName();
+
+  void setSalary(float salary);
+
+  float getSalary();
+
+  String[] getRoles();
 }
 
-class Developer implements Employee
-{
-    protected $salary;
-    protected $name;
-    protected $roles;
-    
-    public function __construct(string $name, float $salary)
-    {
-        $this->name = $name;
-        $this->salary = $salary;
+public class Developer implements Employee {
+    String name;
+    float salary;
+
+    public Developer(String name, float salary) {
+        this.name = name;
+        this.salary = salary;
     }
 
-    public function getName(): string
-    {
-        return $this->name;
+    @Override
+    public String getName() {
+        return name;
     }
 
-    public function setSalary(float $salary)
-    {
-        $this->salary = $salary;
+    @Override
+    public void setSalary(float salary) {
+        this.salary = salary;
     }
 
-    public function getSalary(): float
-    {
-        return $this->salary;
+    @Override
+    public float getSalary() {
+        return salary;
     }
 
-    public function getRoles(): array
-    {
-        return $this->roles;
+    @Override
+    public String[] getRoles() {
+        return new String[]{"backend"};
     }
 }
 
-class Designer implements Employee
-{
-    protected $salary;
-    protected $name;
-    protected $roles;
+public class Designer implements Employee {
+    String name;
+    float salary;
 
-    public function __construct(string $name, float $salary)
-    {
-        $this->name = $name;
-        $this->salary = $salary;
+    public Designer(String name, float salary) {
+        this.name = name;
+        this.salary = salary;
     }
 
-    public function getName(): string
-    {
-        return $this->name;
+    @Override
+    public String getName() {
+        return name;
     }
 
-    public function setSalary(float $salary)
-    {
-        $this->salary = $salary;
+    @Override
+    public void setSalary(float salary) {
+        this.salary = salary;
     }
 
-    public function getSalary(): float
-    {
-        return $this->salary;
+    @Override
+    public float getSalary() {
+        return salary;
     }
 
-    public function getRoles(): array
-    {
-        return $this->roles;
+    @Override
+    public String[] getRoles() {
+        return new String[]{"designer"};
     }
 }
 ```
 
 然后我们有一个由几种不同类型的员工组成的组织
 
-```php
-class Organization
-{
-    protected $employees;
+```java
+public class Organization {
+    protected List<Employee> employeeList = new ArrayList<>();
 
-    public function addEmployee(Employee $employee)
-    {
-        $this->employees[] = $employee;
+    public void addEmployee(Employee employee) {
+        employeeList.add(employee);
     }
 
-    public function getNetSalaries(): float
-    {
-        $netSalary = 0;
-
-        foreach ($this->employees as $employee) {
-            $netSalary += $employee->getSalary();
+    public float getNetSalaries() {
+        float netSalary = 0.0f;
+        for (Employee employee : employeeList) {
+            netSalary += employee.getSalary();
         }
-
-        return $netSalary;
+        return netSalary;
     }
 }
 ```
 
 然后它可以用作
 
-```php
-// Prepare the employees
-$john = new Developer('John Doe', 12000);
-$jane = new Designer('Jane Doe', 15000);
+```java
+public class CompositeMain {
+    public static void main(String[] args) {
+        // Prepare the employees
+        Developer john = new Developer("John Doe", 12000);
+        Designer jane = new Designer("Jane Doe", 15000);
 
-// Add them to organization
-$organization = new Organization();
-$organization->addEmployee($john);
-$organization->addEmployee($jane);
-
-echo "Net salaries: " . $organization->getNetSalaries(); // Net Salaries: 27000
+        // Add them to organization
+        Organization organization = new Organization();
+        organization.addEmployee(john);
+        organization.addEmployee(jane);
+        System.out.println("Net salaries:" + organization.getNetSalaries()); // Net Salaries: 27000
+    }
+}
 ```
 
 ## ☕装饰模式（Decorator）
