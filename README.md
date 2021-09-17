@@ -956,109 +956,105 @@ public class CompositeMain {
 
 让我们以咖啡为例。首先，我们有一个简单的咖啡实现了咖啡接口
 
-```php
-interface Coffee
-{
-    public function getCost();
-    public function getDescription();
+```java
+public interface Coffee {
+    float getCost();
+    String getDescription();
 }
 
-class SimpleCoffee implements Coffee
-{
-    public function getCost()
-    {
+public class SimpleCoffee implements Coffee {
+    @Override
+    public float getCost() {
         return 10;
     }
 
-    public function getDescription()
-    {
-        return 'Simple coffee';
+    @Override
+    public String getDescription() {
+        return "Simple coffee";
     }
 }
 ```
 
 我们想要使代码易于扩展，在需要时允许通过选项修改它。让我们做一些附加组件（装饰器）
 
-```php
-class MilkCoffee implements Coffee
-{
-    protected $coffee;
+```java
+public class MilkCoffee implements Coffee {
+    final Coffee coffee;
 
-    public function __construct(Coffee $coffee)
-    {
-        $this->coffee = $coffee;
+    public MilkCoffee(Coffee coffee) {
+        this.coffee = coffee;
     }
 
-    public function getCost()
-    {
-        return $this->coffee->getCost() + 2;
+    @Override
+    public float getCost() {
+        return coffee.getCost() + 2;
     }
 
-    public function getDescription()
-    {
-        return $this->coffee->getDescription() . ', milk';
+    @Override
+    public String getDescription() {
+        return coffee.getDescription() + ", milk";
     }
 }
 
-class WhipCoffee implements Coffee
-{
-    protected $coffee;
+public class WhipCoffee implements Coffee {
+    final Coffee coffee;
 
-    public function __construct(Coffee $coffee)
-    {
-        $this->coffee = $coffee;
+    public WhipCoffee(Coffee coffee) {
+        this.coffee = coffee;
     }
 
-    public function getCost()
-    {
-        return $this->coffee->getCost() + 5;
+    @Override
+    public float getCost() {
+        return coffee.getCost() + 5;
     }
 
-    public function getDescription()
-    {
-        return $this->coffee->getDescription() . ', whip';
+    @Override
+    public String getDescription() {
+        return coffee.getDescription() + ", whip";
     }
 }
 
-class VanillaCoffee implements Coffee
-{
-    protected $coffee;
+public class VanillaCoffee implements Coffee {
+    final Coffee coffee;
 
-    public function __construct(Coffee $coffee)
-    {
-        $this->coffee = $coffee;
+    public VanillaCoffee(Coffee coffee) {
+        this.coffee = coffee;
     }
 
-    public function getCost()
-    {
-        return $this->coffee->getCost() + 3;
+    @Override
+    public float getCost() {
+        return coffee.getCost() + 3;
     }
 
-    public function getDescription()
-    {
-        return $this->coffee->getDescription() . ', vanilla';
+    @Override
+    public String getDescription() {
+        return coffee.getDescription() + ", vanilla";
     }
 }
 ```
 
 让我们现在喝杯咖啡
 
-```php
-$someCoffee = new SimpleCoffee();
-echo $someCoffee->getCost(); // 10
-echo $someCoffee->getDescription(); // Simple Coffee
+```java
+public class DecoratorMain {
+    public static void main(String[] args) {
+        Coffee someCoffee = new SimpleCoffee();
+        System.out.println(someCoffee.getCost()); // 10
+        System.out.println(someCoffee.getDescription()); // Simple Coffee
 
-$someCoffee = new MilkCoffee($someCoffee);
-echo $someCoffee->getCost(); // 12
-echo $someCoffee->getDescription(); // Simple Coffee, milk
+        someCoffee = new MilkCoffee(someCoffee);
+        System.out.println(someCoffee.getCost()); // 12
+        System.out.println(someCoffee.getDescription()); // Simple Coffee, milk
 
-$someCoffee = new WhipCoffee($someCoffee);
-echo $someCoffee->getCost(); // 17
-echo $someCoffee->getDescription(); // Simple Coffee, milk, whip
+        someCoffee = new WhipCoffee(someCoffee);
+        System.out.println(someCoffee.getCost()); // 17
+        System.out.println(someCoffee.getDescription()); // Simple Coffee, milk, whip
 
-$someCoffee = new VanillaCoffee($someCoffee);
-echo $someCoffee->getCost(); // 20
-echo $someCoffee->getDescription(); // Simple Coffee, milk, whip, vanilla
+        someCoffee = new VanillaCoffee(someCoffee);
+        System.out.println(someCoffee.getCost()); // 20
+        System.out.println(someCoffee.getDescription()); // Simple Coffee, milk, whip, vanilla
+    }
+}
 ```
 
 ## 📦门面模式（Facade）
