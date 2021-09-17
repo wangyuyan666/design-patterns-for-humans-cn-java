@@ -1742,74 +1742,71 @@ public class MediatorMain {
 
 首先，我们有 memento 对象，可以保存编辑器状态
 
-```php
-class EditorMemento
-{
-    protected $content;
+```java
+public class EditorMemento {
+    final String content;
 
-    public function __construct(string $content)
-    {
-        $this->content = $content;
+    public EditorMemento(String content) {
+        this.content = content;
     }
 
-    public function getContent()
-    {
-        return $this->content;
+    public String getContent() {
+        return content;
     }
 }
 ```
 
 然后我们有将使用 memento 对象的编辑器，即发起者
 
-```php
-class Editor
-{
-    protected $content = '';
+```java
+public class Editor {
+    String content;
 
-    public function type(string $words)
-    {
-        $this->content = $this->content . ' ' . $words;
+    public void type(String word) {
+        this.content = this.content + " " + word;
     }
 
-    public function getContent()
-    {
-        return $this->content;
+    public String getContent() {
+        return content;
     }
 
-    public function save()
-    {
-        return new EditorMemento($this->content);
+    public EditorMemento save() {
+        return new EditorMemento(content);
     }
 
-    public function restore(EditorMemento $memento)
-    {
-        $this->content = $memento->getContent();
+    public void restore(EditorMemento memento) {
+        this.content = memento.getContent();
     }
 }
 ```
 
 然后它可以用作
 
-```php
-$editor = new Editor();
+```java
+public class MementoMain {
+    public static void main(String[] args) {
+        Editor editor = new Editor();
 
-// Type some stuff
-$editor->type('This is the first sentence.');
-$editor->type('This is second.');
+        // Type some stuff
+        editor.type("This is the first sentence.");
+        editor.type("This is second.");
 
-// Save the state to restore to : This is the first sentence. This is second.
-$saved = $editor->save();
+        // Save the state to restore to : This is the first sentence. This is second.
+        EditorMemento saved = editor.save();
 
-// Type some more
-$editor->type('And this is third.');
+        // Type some more
+        editor.type("And this is third.");
 
-// Output: Content before Saving
-echo $editor->getContent(); // This is the first sentence. This is second. And this is third.
+        // Output: Content before Saving
+        System.out.println(editor.getContent()); // This is the first sentence. This is second. And this is third.
 
-// Restoring to last saved state
-$editor->restore($saved);
+        // Restoring to last saved state
+        editor.restore(saved);
 
-$editor->getContent(); // This is the first sentence. This is second.
+        System.out.println(editor.getContent()); // This is the first sentence. This is second.
+    }
+}
+
 ```
 
 ## 😎观察者模式（Observer）
