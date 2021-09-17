@@ -642,75 +642,74 @@ public class SingletonMain {
 
 首先，我们有一个`Lion`所有类型的狮子必须实现的接口
 
-```php
-interface Lion
-{
-    public function roar();
+```java
+public interface Lion {
+    void roar();
 }
 
-class AfricanLion implements Lion
-{
-    public function roar()
-    {
+public class AfricanLion implements Lion {
+    @Override
+    public void roar() {
+        System.out.println("i am AfricanLion");
     }
 }
 
-class AsianLion implements Lion
-{
-    public function roar()
-    {
+public class AsianLion implements Lion {
+    @Override
+    public void roar() {
+        System.out.println("i am AsianLion");
     }
 }
 ```
 
 猎人期望狩猎任何`Lion`接口的实现。
 
-```php
-class Hunter
-{
-    public function hunt(Lion $lion)
-    {
-        $lion->roar();
+```java
+public class Hunter {
+    public void hunt(Lion lion) {
+        lion.roar();
     }
 }
 ```
 
 现在，我们需要在游戏中加入一个`WildDog`，以便猎人也可以狩猎它。但我们不能直接这样做，因为狗有不同的接口。为了使它与我们的猎人兼容，我们将不得不创建一个兼容的适配器
 
-```php
+```java
 // This needs to be added to the game
-class WildDog
-{
-    public function bark()
-    {
+public class WildDog {
+    public void bark() {
+        System.out.println("i am WildDog");
     }
 }
 
 // Adapter around wild dog to make it compatible with our game
-class WildDogAdapter implements Lion
-{
-    protected $dog;
+public class WildDogAdapter implements Lion{
 
-    public function __construct(WildDog $dog)
-    {
-        $this->dog = $dog;
+    final WildDog dog;
+
+    public WildDogAdapter(WildDog dog) {
+        this.dog = dog;
     }
 
-    public function roar()
-    {
-        $this->dog->bark();
+    @Override
+    public void roar() {
+        dog.bark();
     }
 }
 ```
 
 现在在游戏中通过`WildDogAdapter`可以使用`WildDog`。
 
-```php
-$wildDog = new WildDog();
-$wildDogAdapter = new WildDogAdapter($wildDog);
+```java
+public class AdapterMain {
+    public static void main(String[] args) {
+        WildDog dog = new WildDog();
+        WildDogAdapter dogAdapter = new WildDogAdapter(dog);
 
-$hunter = new Hunter();
-$hunter->hunt($wildDogAdapter);
+        Hunter hunter = new Hunter();
+        hunter.hunt(dogAdapter);
+    }
+}
 ```
 
 ## 🚡桥梁模式（Bridge）
