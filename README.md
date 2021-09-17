@@ -1446,108 +1446,99 @@ public class ChainOfResponsibility {
 
 首先，我们有接收器，它可以执行每个可以执行的操作
 
-```php
-// Receiver
-class Bulb
-{
-    public function turnOn()
-    {
-        echo "Bulb has been lit";
+```java
+public class Bulb {
+    public void turnOn() {
+        System.out.println("Bulb has been lit");
     }
 
-    public function turnOff()
-    {
-        echo "Darkness!";
+    public void turnOff() {
+        System.out.println("Darkness!");
     }
 }
 ```
 
 然后我们有一个接口，每个命令将实现这个接口，然后我们有一组命令
 
-```php
-interface Command
-{
-    public function execute();
-    public function undo();
-    public function redo();
+```java
+public interface Command {
+    void execute();
+    void undo();
+    void redo();
 }
 
 // Command
-class TurnOn implements Command
-{
-    protected $bulb;
+public class TurnOn implements Command {
+    final Bulb bulb;
 
-    public function __construct(Bulb $bulb)
-    {
-        $this->bulb = $bulb;
+    public TurnOn(Bulb bulb) {
+        this.bulb = bulb;
     }
 
-    public function execute()
-    {
-        $this->bulb->turnOn();
+    @Override
+    public void execute() {
+        this.bulb.turnOn();
     }
 
-    public function undo()
-    {
-        $this->bulb->turnOff();
+    @Override
+    public void undo() {
+        this.bulb.turnOff();
     }
 
-    public function redo()
-    {
-        $this->execute();
+    @Override
+    public void redo() {
+        this.execute();
     }
 }
 
-class TurnOff implements Command
-{
-    protected $bulb;
+public class TurnOff implements Command{
+    final Bulb bulb;
 
-    public function __construct(Bulb $bulb)
-    {
-        $this->bulb = $bulb;
+    public TurnOff(Bulb bulb) {
+        this.bulb = bulb;
     }
 
-    public function execute()
-    {
-        $this->bulb->turnOff();
+    @Override
+    public void execute() {
+        this.bulb.turnOff();
     }
 
-    public function undo()
-    {
-        $this->bulb->turnOn();
+    @Override
+    public void undo() {
+        this.bulb.turnOn();
     }
 
-    public function redo()
-    {
-        $this->execute();
+    @Override
+    public void redo() {
+        this.execute();
     }
 }
 ```
 
 然后我们有一个`Invoker`，客户端与之进行交互以处理任何命令
 
-```php
+```java
 // Invoker
-class RemoteControl
-{
-    public function submit(Command $command)
-    {
-        $command->execute();
+public class RemoteControl {
+    public void submit(Command command) {
+        command.execute();
     }
 }
 ```
 
 最后，让我们看看我们如何在客户端使用它
 
-```php
-$bulb = new Bulb();
-
-$turnOn = new TurnOn($bulb);
-$turnOff = new TurnOff($bulb);
-
-$remote = new RemoteControl();
-$remote->submit($turnOn); // Bulb has been lit!
-$remote->submit($turnOff); // Darkness!
+```java
+public class CommandMain {
+    public static void main(String[] args) {
+        Bulb bulb = new Bulb();
+        TurnOn turnOn = new TurnOn(bulb);
+        TurnOff turnOff = new TurnOff(bulb);
+        RemoteControl remoteControl = new RemoteControl();
+        remoteControl.submit(turnOn); // Bulb has been lit!
+        remoteControl.submit(turnOff);// Darkness!
+    }
+}
 ```
 
 命令模式还可用于实现基于事务的系统。当你一执行命令就持续维持命令历史记录的情况下。如果成功执行了最后一个命令，一切都很好，否则只需要遍历历史记录持续在已经执行过的命令上执行`undo`。
