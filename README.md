@@ -2226,96 +2226,95 @@ public class StateMain {
 
 首先，我们有指定了构建算法的框架的基类
 
-```php
-abstract class Builder
-{
-
-    // Template method
-    final public function build()
-    {
-        $this->test();
-        $this->lint();
-        $this->assemble();
-        $this->deploy();
+```java
+public abstract class Builder {
+    final public void build() {
+        test();
+        lint();
+        assemble();
+        deploy();
     }
 
-    abstract public function test();
-    abstract public function lint();
-    abstract public function assemble();
-    abstract public function deploy();
+    abstract public void test();
+
+    abstract public void lint();
+
+    abstract public void assemble();
+
+    abstract public void deploy();
 }
 ```
 
 然后我们可以实现我们的实现
 
-```php
-class AndroidBuilder extends Builder
-{
-    public function test()
-    {
-        echo 'Running android tests';
+```java
+public class AndroidBuilder extends Builder {
+    @Override
+    public void test() {
+        System.out.println("Running android tests");
     }
 
-    public function lint()
-    {
-        echo 'Linting the android code';
+    @Override
+    public void lint() {
+        System.out.println("Linting the android code");
     }
 
-    public function assemble()
-    {
-        echo 'Assembling the android build';
+    @Override
+    public void assemble() {
+        System.out.println("Assembling the android build");
     }
 
-    public function deploy()
-    {
-        echo 'Deploying android build to server';
+    @Override
+    public void deploy() {
+        System.out.println("Deploying android build to server");
     }
 }
 
-class IosBuilder extends Builder
-{
-    public function test()
-    {
-        echo 'Running ios tests';
+public class IOSBuilder extends Builder{
+    @Override
+    public void test() {
+        System.out.println("Running ios tests");
     }
 
-    public function lint()
-    {
-        echo 'Linting the ios code';
+    @Override
+    public void lint() {
+        System.out.println("Linting the ios code");
     }
 
-    public function assemble()
-    {
-        echo 'Assembling the ios build';
+    @Override
+    public void assemble() {
+        System.out.println("Assembling the ios build");
     }
 
-    public function deploy()
-    {
-        echo 'Deploying ios build to server';
+    @Override
+    public void deploy() {
+        System.out.println("Deploying ios build to server");
     }
 }
 ```
 
 然后它可以用作
 
-```php
-$androidBuilder = new AndroidBuilder();
-$androidBuilder->build();
+```java
+public class TemplateMethodMain {
+    public static void main(String[] args) {
+        Builder builder = new AndroidBuilder();
+        builder.build();
+        // Output:
+        // Running android tests
+        // Linting the android code
+        // Assembling the android build
+        // Deploying android build to server
+        builder = new IOSBuilder();
+        builder.build();
 
-// Output:
-// Running android tests
-// Linting the android code
-// Assembling the android build
-// Deploying android build to server
-
-$iosBuilder = new IosBuilder();
-$iosBuilder->build();
-
-// Output:
-// Running ios tests
-// Linting the ios code
-// Assembling the ios build
-// Deploying ios build to server
+        // Output:
+        // Running ios tests
+        // Linting the ios code
+        // Assembling the ios build
+        // Deploying ios build to server
+    }
+}
 ```
 
 ## 总结
