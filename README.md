@@ -2051,65 +2051,59 @@ lion.accept(jump);   // Walked on water a little and disappeared
 
 从上面翻译我们的例子。首先，我们有策略接口和不同的策略实现
 
-```php
-interface SortStrategy
-{
-    public function sort(array $dataset): array;
+```java
+public interface SortStrategy {
+    int[] sort(int[] array);
 }
 
-class BubbleSortStrategy implements SortStrategy
-{
-    public function sort(array $dataset): array
-    {
-        echo "Sorting using bubble sort";
-
-        // Do sorting
-        return $dataset;
+public class BubbleSortStrategy implements SortStrategy{
+    @Override
+    public int[] sort(int[] array) {
+        System.out.println("Sorting using bubble sort");
+        return array;
     }
 }
 
-class QuickSortStrategy implements SortStrategy
-{
-    public function sort(array $dataset): array
-    {
-        echo "Sorting using quick sort";
-
-        // Do sorting
-        return $dataset;
+public class QuickSortStrategy implements SortStrategy {
+    @Override
+    public int[] sort(int[] array) {
+        System.out.println("Sorting using quick sort");
+        return array;
     }
 }
 ```
 
 然后我们的客户将使用任何策略
 
-```php
-class Sorter
-{
-    protected $sorter;
+```java
+public class Sorter {
 
-    public function __construct(SortStrategy $sorter)
-    {
-        $this->sorter = $sorter;
+    private SortStrategy sortStrategy;
+
+    public Sorter(SortStrategy sortStrategy) {
+        this.sortStrategy = sortStrategy;
     }
 
-    public function sort(array $dataset): array
-    {
-        return $this->sorter->sort($dataset);
+    public int[] sort(int[] array) {
+        return sortStrategy.sort(array);
     }
 }
 ```
 
 它可以用作
 
-And it can be used as
-```php
-$dataset = [1, 5, 4, 3, 2, 8];
+```java
+public class StrategyMain {
+  public static void main(String[] args) {
+    int[] dataset = {1, 5, 4, 3, 2, 8};
 
-$sorter = new Sorter(new BubbleSortStrategy());
-$sorter->sort($dataset); // Output : Sorting using bubble sort
+    Sorter sorter = new Sorter(new BubbleSortStrategy()); // Output : Sorting using bubble sort
+    sorter.sort(dataset);
 
-$sorter = new Sorter(new QuickSortStrategy());
-$sorter->sort($dataset); // Output : Sorting using quick sort
+    sorter = new Sorter(new QuickSortStrategy()); // Output : Sorting using quick sort
+    sorter.sort(dataset);
+  }
+}
 ```
 
 ## 💢状态模式（State）
