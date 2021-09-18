@@ -2126,84 +2126,77 @@ public class StrategyMain {
 
 首先，我们有状态接口和一些状态的实现
 
-```php
-interface WritingState
-{
-    public function write(string $words);
+```java
+public interface WritingState {
+    void write(String word);
 }
 
-class UpperCase implements WritingState
-{
-    public function write(string $words)
-    {
-        echo strtoupper($words);
+public class UpperCase implements WritingState {
+    @Override
+    public void write(String word) {
+        System.out.println(word.toUpperCase());
     }
 }
 
-class LowerCase implements WritingState
-{
-    public function write(string $words)
-    {
-        echo strtolower($words);
+public class LowerCase implements WritingState {
+    @Override
+    public void write(String word) {
+        System.out.println(word.toLowerCase());
     }
 }
 
-class DefaultText implements WritingState
-{
-    public function write(string $words)
-    {
-        echo $words;
+public class DefaultText implements WritingState {
+    @Override
+    public void write(String word) {
+        System.out.println(word);
     }
 }
 ```
 
 然后我们有编辑
 
-```php
-class TextEditor
-{
-    protected $state;
+```java
+public class TextEditor {
+  private WritingState writingState;
 
-    public function __construct(WritingState $state)
-    {
-        $this->state = $state;
-    }
+  public TextEditor(WritingState writingState) {
+    this.writingState = writingState;
+  }
 
-    public function setState(WritingState $state)
-    {
-        $this->state = $state;
-    }
+  public void setWritingState(WritingState writingState) {
+    this.writingState = writingState;
+  }
 
-    public function type(string $words)
-    {
-        $this->state->write($words);
-    }
+  public void type(String word) {
+    this.writingState.write(word);
+  }
 }
 ```
 
 然后它可以用作
 
-```php
-$editor = new TextEditor(new DefaultText());
+```java
+public class StateMain {
+    public static void main(String[] args) {
+        TextEditor textEditor = new TextEditor(new DefaultText());
+        textEditor.type("First line");
 
-$editor->type('First line');
+        textEditor.setWritingState(new UpperCase());
+        textEditor.type("Second line");
+        textEditor.type("Third line");
 
-$editor->setState(new UpperCase());
+        textEditor.setWritingState(new LowerCase());
+        textEditor.type("Fourth line");
+        textEditor.type("Fifth line");
 
-$editor->type('Second line');
-$editor->type('Third line');
-
-$editor->setState(new LowerCase());
-
-$editor->type('Fourth line');
-$editor->type('Fifth line');
-
-// Output:
-// First line
-// SECOND LINE
-// THIRD LINE
-// fourth line
-// fifth line
+        // Output:
+        // First line
+        // SECOND LINE
+        // THIRD LINE
+        // fourth line
+        // fifth line
+    }
+}
 ```
 
 ## 📒模板方法模式（Template Method）
