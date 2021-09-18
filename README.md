@@ -1827,83 +1827,69 @@ public class MementoMain {
 
 从上面翻译我们的例子。首先，我们有需要被通知职位发布的求职者
 
-```php
-class JobPost
-{
-    protected $title;
+```java
+public class JobPost {
+    private final String title;
 
-    public function __construct(string $title)
-    {
-        $this->title = $title;
+    public JobPost(String title) {
+        this.title = title;
     }
 
-    public function getTitle()
-    {
-        return $this->title;
+    public String getTitle() {
+        return title;
     }
 }
 
-class JobSeeker implements Observer
-{
-    protected $name;
+public class JobSeeker implements Observer {
 
-    public function __construct(string $name)
-    {
-        $this->name = $name;
+    private final String name;
+
+    public JobSeeker(String name) {
+        this.name = name;
     }
 
-    public function onJobPosted(JobPost $job)
-    {
+    @Override
+    public void update(Observable o, Object arg) {
         // Do something with the job posting
-        echo 'Hi ' . $this->name . '! New job posted: '. $job->getTitle();
+        if (arg instanceof JobPost) {
+            System.out.println("Hi " + name + "! New job posted: " + ((JobPost) arg).getTitle());
+        }
     }
 }
 ```
 
 然后我们会把职位发送给求职者订阅的对象
 
-```php
-class EmploymentAgency implements Observable
-{
-    protected $observers = [];
+```java
+public class EmploymentAgency extends Observable {
 
-    protected function notify(JobPost $jobPosting)
-    {
-        foreach ($this->observers as $observer) {
-            $observer->onJobPosted($jobPosting);
-        }
-    }
-
-    public function attach(Observer $observer)
-    {
-        $this->observers[] = $observer;
-    }
-
-    public function addJob(JobPost $jobPosting)
-    {
-        $this->notify($jobPosting);
+    @Override
+    public void notifyObservers(Object arg) {
+        setChanged();
+        super.notifyObservers(arg);
     }
 }
 ```
 
 然后它可以这样使用
 
-```php
-// Create subscribers
-$johnDoe = new JobSeeker('John Doe');
-$janeDoe = new JobSeeker('Jane Doe');
-
-// Create publisher and attach subscribers
-$jobPostings = new EmploymentAgency();
-$jobPostings->attach($johnDoe);
-$jobPostings->attach($janeDoe);
-
-// Add a new job and see if subscribers get notified
-$jobPostings->addJob(new JobPost('Software Engineer'));
-
-// Output
-// Hi John Doe! New job posted: Software Engineer
-// Hi Jane Doe! New job posted: Software Engineer
+```java
+public class ObserverMain {
+    public static void main(String[] args) {
+        // Create subscribers
+        JobSeeker john = new JobSeeker("John Doe");
+        JobSeeker jane = new JobSeeker("Jane Doe");
+        // Create publisher and add subscribers
+        EmploymentAgency employmentAgency = new EmploymentAgency();
+        employmentAgency.addObserver(john);
+        employmentAgency.addObserver(jane);
+        // Add a new job and see if subscribers get notified
+        employmentAgency.notifyObservers(new JobPost("Software Engineer"));
+        // Output
+        // Hi John Doe! New job posted: Software Engineer
+        // Hi Jane Doe! New job posted: Software Engineer
+    }
+}
 ```
 
 ## 🏃访问者模式（Visitor）
