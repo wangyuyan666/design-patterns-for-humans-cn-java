@@ -1910,99 +1910,97 @@ public class ObserverMain {
 
 让我们举一个动物园模拟的例子，我们有几种不同的动物，我们要让它们发声。让我们用访客模式翻译这个
 
-```php
+```java
+
 // Visitee
-interface Animal
-{
-    public function accept(AnimalOperation $operation);
+public interface Animal {
+    void accept(AnimalOperation operation);
 }
 
 // Visitor
-interface AnimalOperation
-{
-    public function visitMonkey(Monkey $monkey);
-    public function visitLion(Lion $lion);
-    public function visitDolphin(Dolphin $dolphin);
+public interface AnimalOperation {
+    void visitMonkey(Monkey monkey);
+
+    void visitLion(Lion lion);
+
+    void visitDolphin(Dolphin dolphin);
 }
 ```
 
 然后我们有动物的实现类
 
-```php
-class Monkey implements Animal
-{
-    public function shout()
-    {
-        echo 'Ooh oo aa aa!';
+```java
+public class Monkey implements Animal {
+    @Override
+    public void accept(AnimalOperation operation) {
+        operation.visitMonkey(this);
     }
 
-    public function accept(AnimalOperation $operation)
-    {
-        $operation->visitMonkey($this);
+    public void shout() {
+        System.out.println("Ooh oo aa aa!");
     }
 }
 
-class Lion implements Animal
-{
-    public function roar()
-    {
-        echo 'Roaaar!';
+public class Lion implements Animal {
+    @Override
+    public void accept(AnimalOperation operation) {
+        operation.visitLion(this);
     }
 
-    public function accept(AnimalOperation $operation)
-    {
-        $operation->visitLion($this);
+    public void roar() {
+        System.out.println("Roaaar!");
     }
 }
 
-class Dolphin implements Animal
-{
-    public function speak()
-    {
-        echo 'Tuut tuttu tuutt!';
+public class Dolphin implements Animal {
+    @Override
+    public void accept(AnimalOperation operation) {
+        operation.visitDolphin(this);
     }
 
-    public function accept(AnimalOperation $operation)
-    {
-        $operation->visitDolphin($this);
+    public void speak() {
+        System.out.println("Tuut tuttu tuutt!");
     }
 }
 ```
 
 让我们实现我们的访客
 
-```php
-class Speak implements AnimalOperation
-{
-    public function visitMonkey(Monkey $monkey)
-    {
-        $monkey->shout();
+```java
+public class Speak implements AnimalOperation {
+    @Override
+    public void visitMonkey(Monkey monkey) {
+        monkey.shout();
     }
 
-    public function visitLion(Lion $lion)
-    {
-        $lion->roar();
+    @Override
+    public void visitLion(Lion lion) {
+        lion.roar();
     }
 
-    public function visitDolphin(Dolphin $dolphin)
-    {
-        $dolphin->speak();
+    @Override
+    public void visitDolphin(Dolphin dolphin) {
+        dolphin.speak();
     }
 }
 ```
 
 然后它可以用作
 
-```php
-$monkey = new Monkey();
-$lion = new Lion();
-$dolphin = new Dolphin();
+```java
+public class VisitorMain {
+    public static void main(String[] args) {
+        Monkey monkey = new Monkey();
+        Lion lion = new Lion();
+        Dolphin dolphin = new Dolphin();
 
-$speak = new Speak();
+        Speak speak = new Speak();
 
-$monkey->accept($speak);    // Ooh oo aa aa!    
-$lion->accept($speak);      // Roaaar!
-$dolphin->accept($speak);   // Tuut tutt tuutt!
+        monkey.accept(speak); // Ooh oo aa aa!
+        lion.accept(speak);   // Roaaar!
+        dolphin.accept(speak);// Tuut tutt tuutt!
+    }
+}
 ```
 
 我们可以通过为动物建立一个继承层次结构来做到这一点，但是每当我们需要为动物添加新动作时我们就必须修改动物。但现在我们不必改变它们。例如，假设我们被要求向动物添加跳跃行为，我们可以通过创建新的访问者来添加它，即
