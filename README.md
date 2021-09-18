@@ -2005,39 +2005,32 @@ public class VisitorMain {
 
 我们可以通过为动物建立一个继承层次结构来做到这一点，但是每当我们需要为动物添加新动作时我们就必须修改动物。但现在我们不必改变它们。例如，假设我们被要求向动物添加跳跃行为，我们可以通过创建新的访问者来添加它，即
 
-```php
-class Jump implements AnimalOperation
-{
-    public function visitMonkey(Monkey $monkey)
-    {
-        echo 'Jumped 20 feet high! on to the tree!';
+```java
+public class Jump implements AnimalOperation {
+    @Override
+    public void visitMonkey(Monkey monkey) {
+        System.out.println("Jumped 20 feet high! on to the tree!");
     }
 
-    public function visitLion(Lion $lion)
-    {
-        echo 'Jumped 7 feet! Back on the ground!';
+    @Override
+    public void visitLion(Lion lion) {
+        System.out.println("Jumped 7 feet! Back on the ground!");
     }
 
-    public function visitDolphin(Dolphin $dolphin)
-    {
-        echo 'Walked on water a little and disappeared';
+    @Override
+    public void visitDolphin(Dolphin dolphin) {
+        System.out.println("Walked on water a little and disappeared");
     }
 }
 ```
 
 并用于
 
-```php
-$jump = new Jump();
-
-$monkey->accept($speak);   // Ooh oo aa aa!
-$monkey->accept($jump);    // Jumped 20 feet high! on to the tree!
-
-$lion->accept($speak);     // Roaaar!
-$lion->accept($jump);      // Jumped 7 feet! Back on the ground!
-
-$dolphin->accept($speak);  // Tuut tutt tuutt!
-$dolphin->accept($jump);   // Walked on water a little and disappeared
+```java
+Jump jump = new Jump();
+monkey.accept(jump); // Jumped 20 feet high! on to the tree!
+lion.accept(jump);   // Jumped 7 feet! Back on the ground!
+lion.accept(jump);   // Walked on water a little and disappeared
 ```
 
 ## 💡策略模式（Strategy）
